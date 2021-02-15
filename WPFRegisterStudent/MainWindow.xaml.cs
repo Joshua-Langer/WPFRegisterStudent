@@ -21,6 +21,7 @@ namespace WPFRegisterStudent
     public partial class MainWindow : Window
     {
         Course choice;
+        int courseHours = 0;
 
 
         public MainWindow()
@@ -55,10 +56,25 @@ namespace WPFRegisterStudent
         private void button_Click(object sender, RoutedEventArgs e)
         {
             choice = (Course)(this.comboBox.SelectedItem);
-
-            // TO DO - Create code to validate user selection (the choice object)
-            // and to display an error or a registation confirmation message accordinlgy
-            // Also update the total credit hours textbox if registration is confirmed for a selected course
+            /*
+             * Section added by Joshua Langer 2/15/2021
+             */
+            if(choice.IsRegisteredAlready()) //confirm if registration for the selected course has happened.
+            {
+                label3.Content = "You are already registered for that course."; //UI note for the user.
+            }
+            else if(!choice.IsRegisteredAlready() && courseHours < 9) //if the course is not currently registered and the user is under 9 credit hours
+            {
+                listBox.Items.Add(choice); //register the course
+                label3.Content = "Registration Confirmed for course " + choice + "."; //UI note for the user, showing they successfully registered for their course.
+                choice.SetToRegistered(); //set the registration flag
+                courseHours += 3; //add the credit hours to the user
+                textBox.Text = courseHours.ToString();
+            }
+            else if(courseHours >= 9) //if the user has 9 or more credit hours, deny their selection.
+            {
+                label3.Content = "You can not register for more than 9 credit hours."; //UI note for the user explaining they can't register for more courses.
+            }
 
         }
 
